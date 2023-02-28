@@ -1,7 +1,12 @@
+# Importamos la clase Database de la cual solo tendremos una instancia usando el patron singleton
 from database import database as bd
+ 
+# y tambien las clases que implementan los metodos crud, los data transfer
 import logica_negocio.classes.pacientes as pac
-import logica_negocio.classes.medico as med
-import logica_negocio.classes.turnos as tur
+import logica_negocio.classes.medico    as med
+import logica_negocio.classes.turnos    as tur
+
+# usaremos la libreria time para generar un delay minimo.
 import time
 
 # creamos un metodo statico para crear un decorador singleton, ya que nuestra clase solo se debe instanciar una vez
@@ -25,14 +30,24 @@ def singleton(cls): # el singleton usara como argumento nuestra clase, ya que us
             return instances[cls]
     # retornamos el metodod wrap
     return wrap
+print("++++++++++++++   Clinicas 3000 v 1.00 - Desarrollado por Matias Orellana    ++++++++++++++")
+print("Examen Final Laboratorio 2, profesor Alejandro Arriagada")
+print("\n")
+
+print("Ingresa los datos de conexion a la base datos")
+localhost = input("Ingresa host: ")
+user = input("Ingresa usuario: ")
+password = input("Ingresa password: ")
+base_de_datos = input("Ingresa el nombre de la base de datos: ")
 
 
-#   configuracion para conectar la bd
+
+# configuracion para conectar la bd la almacenamos en un diccionario llamado config
 config = {
-"host"      : "localhost",
-"user"      : "root",
-"passwd"    : "BullDog143$",
-"db_name"   : "clinica"
+"host"      : localhost,
+"user"      : user,
+"passwd"    : password,
+"db_name"   : base_de_datos
 }
 
 #   creamos la instancia de la clase Database, usamos el patron singleton para asegurar que solo
@@ -47,17 +62,21 @@ time.sleep(0.50)
 connect = db.createConecction()
 
 
-# 
+
 @singleton # usamos el decorador singleton por que nuestra clase LogicaNegocio solo se instanciara una vez  
 class LogicaNegocio(object):
 
-    # menu de trabajo
+    # menu de trabajo, es el metodo principal de la aplicacion
+    # aqui abstraemos los metodos de tal manera que toda nuestra logica es independiente de
+    # los emisores de datos. Esto nos da la posibilidad de cambiar esos emisores sin alterar
+    # la logica core de la aplicacion, la logica de negocio
+    
     def display_menu(self):
-        # instanciamos las clases que usaremos en el menu
-        # gracias al patron singleton estas instancias solo se crearan una vez
+        # instanciamos las clases que usaremos en el menu, que no son mas que nuestros data transfer objects
         p = pac.Paciente(connect)
         m = med.Medico(connect)
         t = tur.Turno(connect)
+        
         # definimos las opciones que le daremos al usuario en un diccionario
         acciones = {
             "a": "Ingresar nuevo Paciente", 
@@ -72,7 +91,8 @@ class LogicaNegocio(object):
             "j": "Crear turno unico",
             "k": "Crear turno masivo",
             "l": "Ver turnos",
-            "m": "Otorgar turno"
+            "m": "Otorgar turno",
+            "n": "Eliminar turno",
 
         }
         
@@ -89,6 +109,10 @@ class LogicaNegocio(object):
         accion_elegida = input("Tipea la letra que corresponda, y presiona enter: ")
 
         print(acciones[accion_elegida] + ": ")
+        
+        # el trabajo principal de este metodo es redirigir la aplicacion
+        # para esto usamos una especie de switch en el cual dependiendo
+        # de la opcion que elija el usuario actuamos de una manera u otra
         if accion_elegida == "a":
             p.create_patient()
             print("\n")
@@ -189,16 +213,15 @@ class LogicaNegocio(object):
             print("\n")
             self.display_menu()
         elif accion_elegida == "n":
-            p.getPatients()
-            paciente = input("Ingresa DNI de paciente: ")
             t.getAllAppoitmentsByDoctor()
             turno = input("Ingresa ID de turno: ")
-            t.deleteAppointment(int(turno), int(paciente))
+            t.deleteAppointment(int(turno))
             print("\n")
             input("Presiona enter para continuar")
             print("---------------------------------------------------")
-            print("\n")   
-                
+            print("\n")
+            self.display_menu()
+        
         
              
         

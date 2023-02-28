@@ -3,9 +3,11 @@ from prettytable import PrettyTable
 
 class Medico(object):
     
+    # de la misma manera que la clase crud solicitaremos en el constructor la conexion a la base de datos
     def __init__(self, connect):
         self.__connect = connect
-    
+        
+    # implementamos el metodo create 
     def create_doctor(self):
         nombre = input("Ingresa el nombre del medico: ")
         apellido = input("Ingresa el apellido del medico: ")
@@ -15,6 +17,7 @@ class Medico(object):
         
         med_crud.MedicosCrud(self.__connect).crearMedico(nombre,apellido,matricula,especialidad)
     
+    # el metodo get para todos los doctores
     def getDoctors(self):
        medicos = med_crud.MedicosCrud(self.__connect).obtenerMedicos()
        table = [["Id Paciente", "Nombre", "Apellido", "Especialidad", "Matricula"]]
@@ -25,7 +28,7 @@ class Medico(object):
            tab.add_row(row)
        print(tab) 
     
-       
+    # el metodo get para un unico doctor   
     def getDoctor(self):
         matricula = input("Ingresa matricula del doctor: ")
         doctor = med_crud.MedicosCrud(self.__connect).obtenerMedico(matricula)
@@ -36,7 +39,7 @@ class Medico(object):
         tab.add_row(row)
         print(tab)
     
-    
+    # el metodo de eliminacion
     def deleteDoctor(self):
         matricula = input("Ingresa matricula del doctor: ")
         doctor = med_crud.MedicosCrud(self.__connect).obtenerMedico(matricula)    

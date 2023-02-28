@@ -1,22 +1,20 @@
-import mysql.connector
 from mysql.connector import Error # importamos el metodo Error para manejar los errores
 
 
 #  creamos una clase para manejar las acciones SQL del paciente
 class PacientesCrud:
     
-    # en el metodo inicial pasaremos la coneccion a la base de datos
+    #  en el constructor pediremos como argumento la conexion a la base de datos
     
-    def __init__(self, db):
-        self.__db           = db
-        self.__table_name   = "paciente"
-    
+    def __init__(self, connection):
+        self.__connection = connection    
+        
     # creamos metodo para crear paciente
     def crearPaciente(self, nombre, apellido, DNI):
         try:
-            cursor = self.__db.cursor()
+            cursor = self.__connection.cursor()
             cursor.execute("INSERT INTO paciente VALUES (%s, %s, %s, %s)", (0,f'{nombre}',f'{apellido}',f'{DNI}'))
-            self.__db.commit()
+            self.__connection.commit()
             print("Paciente Creado con Exito")
         except Error as err:
             print(f"{err}")
@@ -28,7 +26,7 @@ class PacientesCrud:
             FROM paciente;
             """
         try:
-            cursor = self.__db.cursor()
+            cursor = self.__connection.cursor()
             cursor.execute(query)
             result = cursor.fetchall()
             return result
@@ -40,7 +38,7 @@ class PacientesCrud:
     def obtenerPaciente(self, dni):
         query = """SELECT * FROM paciente WHERE DNI = (%s) """
         try:
-            cursor = self.__db.cursor()
+            cursor = self.__connection.cursor()
             query = """SELECT * FROM paciente WHERE DNI = (%s) """
             cursor.execute(query, (dni,))
             result = cursor.fetchall()
@@ -55,9 +53,9 @@ class PacientesCrud:
     def modificar_nombre_paciente(self, nombre, dni):
         sql_query1 = """UPDATE paciente SET paciente.nombre = (%s) WHERE dni = (%s) """
         try:
-            cursor = self.__db.cursor()
+            cursor = self.__connection.cursor()
             cursor.execute(sql_query1, (nombre, dni))
-            self.__db.commit()
+            self.__connection.commit()
             print("Actualizado con exito")
         except Error as err:
             print(f"Error: '{err}'") # si hay errores los imprimimos por consola
@@ -66,9 +64,9 @@ class PacientesCrud:
     def modificar_apellido_paciente(self, apellido, dni):
         sql_query1 = """UPDATE paciente SET paciente.apellido = (%s) WHERE dni = (%s) """
         try:
-            cursor = self.__db.cursor()
+            cursor = self.__connection.cursor()
             cursor.execute(sql_query1, (apellido, dni))
-            self.__db.commit()
+            self.__connection.commit()
             print("Actualizado con exito")
         except Error as err:
             print(f"Error: '{err}'") # si hay errores los imprimimos por consola
@@ -79,9 +77,9 @@ class PacientesCrud:
         sql_query1 = """DELETE FROM paciente WHERE paciente.dni = (%s) """
         try:
             
-            cursor = self.__db.cursor()
+            cursor = self.__connection.cursor()
             cursor.execute(sql_query1, (dni,))
-            self.__db.commit()
+            self.__connection.commit()
             print("Eliminado con exito")
         except Error as err:
             print(f"Error: '{err}'") # si hay errores los imprimimos por consola

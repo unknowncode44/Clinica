@@ -57,7 +57,7 @@ class Database(object):
             print(f"{err}")
         
     
-    # una vez tengamos creadas una base datos crearemos un metodo para conectarnos a la misma
+    # una vez tengamos creada una base datos crearemos un metodo para conectarnos a la misma
     def createConecction(self):
         try:
             db = mysql.connector.connect(
@@ -74,6 +74,25 @@ class Database(object):
         
         
         self.__db = db
+        
+    # crearemos tambien un metodo para crear tablas, en caso de que necesitemos
+    def createTable(self, table_name):
+        # creamos una conexion
+        db = mysql.connector.connect(
+            host = self.__host,
+            user = self.__username,
+            paswd = self.__password,
+        )
+        
+        cursor = db.cursor() # el cursor mysql nos permitira ejecutar comandos sql
+        
+        # implementamos un bloque try except
+        try:
+            cursor.execute("CREATE TABLE IF NOT EXISTS "+table_name)
+            return "Se creo la base de datos "+self.__database_name+" exitosamente"
+        
+        except Error as err:
+            print(f"{err}")
     
     
     # adicionalmente, crearemos un metodo para ejecutar queries SQL

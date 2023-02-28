@@ -1,32 +1,38 @@
-import crud.turnos_crud as tur_crud
+import crud.turnos_crud as tur_crud # principalmente necesitamos importar nuestra clase crud, ya que implementaremos sus metodos
 
-from datetime import datetime # como trabajaremos con fecha usaremos el objeto datetime, de la libreria estandar de Python
-from datetime import timedelta # timedelta nos servira para sumar dias / horas / minutos
-from prettytable import PrettyTable
+from datetime       import datetime # como trabajaremos con fecha usaremos el objeto datetime, de la libreria estandar de Python
+from datetime       import timedelta # timedelta nos servira para sumar dias / horas / minutos
+from prettytable    import PrettyTable # usaremos la libreria PrettyTable para mejorar visualmente nuestros resultados
 
 class Turno(object):
     
+    # de la misma manera que la clase crud solicitaremos en el constructor la conexion a la base de datos
     def __init__(self, connect):
         self.__connect = connect
     
+    # implementamos el metodo create de un unico turno.
     def createSingleAppoitment(self, doctor):
-        fecha = input("Ingrese Fecha, use el formato DD/MM/AAAA: ")
-        hora = input("Ingrese hora, use formato HH:MM: ")
-        duracion = input("Ingrese duracion de turno en Minutos: ")
+        # usamos el input del usuario para obtener los datos 
+        fecha       = input("Ingrese Fecha, use el formato DD/MM/AAAA: ")
+        hora        = input("Ingrese hora, use formato HH:MM: ")
+        duracion    = input("Ingrese duracion de turno en Minutos: ")
+        
+        # usamos nuestro metodo crud crear turno.
         tur_crud.TurnosCrud(self.__connect).crearTurno(fecha, hora, duracion, doctor, False) 
+    
         
     def createMultiAppoitment(self, doctor):
         # pedimos los datos al usuario
         fecha_desde = input("Ingrese Fecha Desde, use el formato DD/MM/AAAA: ") 
         fecha_hasta = input("Ingrese Fecha Hasta, use el formato DD/MM/AAAA: ")
-        hora_desde = input("Ingrese hora desde, use formato HH:MM: ")
-        hora_hasta = input("Ingrese hora hasta, use formato HH:MM: ")
+        hora_desde  = input("Ingrese hora desde, use formato HH:MM: ")
+        hora_hasta  = input("Ingrese hora hasta, use formato HH:MM: ")
         duracion_turno_str = input("Ingrese duracion de turno en Minutos: ")
         
         # convertimos la duracion en numero
         duracion_turno_int = int(duracion_turno_str) 
 
-        # creamos strings para luego formatearlos a datetime
+        # creamos strings para luego formatearlos a datetime usando la libreria
         f_desde_str = f"{fecha_desde}" # creamos un string con la fecha desde
         h_desde_str = f"{hora_desde}" # creamos un string con la hora desde
         f_hasta_str = f"{fecha_hasta}" # creamos un string con la fecha hasta
@@ -47,8 +53,8 @@ class Turno(object):
         app_days = [] # creamos una lista que contendra los turnos
         
         # creamos las variables para loop while
-        final_date = given_date_desde # creamos las variables para loop while
-        final_time = given_time_desde
+        final_date = given_date_desde # creamos las variables para loop while de fecha
+        final_time = given_time_desde # creamos las varianles para loop while de hora
         
         # y el formato final, que combinara la fecha con el turno
         final_datetime_format_str = '%d/%m/%Y %H:%M' 
@@ -73,19 +79,27 @@ class Turno(object):
         
         print(len(app_days), "Turnos Creados con exito") # imprimimos confirmacion
     
+    # usamos el metodo obtenerTurnos del crud para implementar la logica
     def getAllAppoitmentsByDoctor(self):
         turnos = tur_crud.TurnosCrud(self.__connect).obtenerTurnos()
+        # aprovechamos el uso de listas para mejorar nuestras listas usando Prettytable
         table = [["Id Turno", "Id Medico", "Nombre Med", "Apellido Med", "Fecha", "Hora", "Status"]]
         tab = PrettyTable(table[0])
+        # recorremos el objeto que recibimos del metodo obtenerTurnos
         for turno in turnos:
+            # y por cada ciclo insertamos nuevas filas a nuestra tabla.
            row = [turno[0],turno[1],turno[2],turno[3],turno[4],turno[5],turno[6]]
            tab.add_row(row)
         print(tab)
     
+    # la implememtacion del metodo otorgarTurno() del crud funciona como un UPDATE de los datos en tabla
     def setAppoitment(self, id_paciente, id_turno):
         tur_crud.TurnosCrud(self.__connect).otorgarTurno(id_paciente, id_turno)
-        
+    
+    # finalmente implementamos una funcion para eliminar turnos    
     def deleteAppointment(self, id_turno):
         tur_crud.TurnosCrud(self.__connect).borrarTurno(id_turno)
+
+        
     
         
