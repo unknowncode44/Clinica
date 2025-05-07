@@ -1,0 +1,51 @@
+-- Create the database
+CREATE DATABASE IF NOT EXISTS <database_name>;
+
+-- Create a table (example, replace <table_name> with the actual table name)
+CREATE TABLE IF NOT EXISTS <table_name> (
+    -- Define columns here
+);
+
+-- Insert a new patient
+INSERT INTO paciente VALUES (0, '<nombre>', '<apellido>', '<DNI>');
+
+-- Retrieve all patients
+SELECT * FROM paciente;
+
+-- Retrieve a single patient by DNI
+SELECT * FROM paciente WHERE DNI = '<DNI>';
+
+-- Update a patient's name
+UPDATE paciente SET paciente.nombre = '<new_name>' WHERE dni = '<DNI>';
+
+-- Update a patient's last name
+UPDATE paciente SET paciente.apellido = '<new_last_name>' WHERE dni = '<DNI>';
+
+-- Delete a patient by DNI
+DELETE FROM paciente WHERE paciente.dni = '<DNI>';
+
+-- Insert a new doctor
+INSERT INTO medico VALUES (0, '<nombre>', '<apellido>', '<especialidad>', '<matricula>');
+
+-- Retrieve all doctors
+SELECT * FROM medico;
+
+-- Retrieve a single doctor by matricula
+SELECT * FROM medico WHERE matricula = '<matricula>';
+
+-- Delete a doctor by matricula
+DELETE FROM medico WHERE medico.matricula = '<matricula>';
+
+-- Insert a new appointment
+INSERT INTO turno VALUES (0, '<fecha>', '<hora>', 'Clinica 1', <duracion>, '4', <doctor_id>, 'disp');
+
+-- Retrieve all appointments with doctor details
+SELECT turno.id_turno, medico.id_medico, medico.nombre, medico.apellido, turno.fecha, turno.horario, turno.status
+FROM turno
+INNER JOIN medico ON turno.medico = medico.id_medico;
+
+-- Update an appointment to assign it to a patient
+UPDATE turno SET turno.status = 'tomado', turno.paciente = <id_paciente> WHERE id_turno = <id_turno>;
+
+-- Delete an appointment by ID
+DELETE FROM turno WHERE turno.id_turno = <id_turno>;
