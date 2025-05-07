@@ -49,3 +49,34 @@ UPDATE turno SET turno.status = 'tomado', turno.paciente = <id_paciente> WHERE i
 
 -- Delete an appointment by ID
 DELETE FROM turno WHERE turno.id_turno = <id_turno>;
+
+-- Table: paciente
+CREATE TABLE IF NOT EXISTS paciente (
+    id_paciente INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    DNI VARCHAR(20) UNIQUE NOT NULL
+);
+
+-- Table: medico
+CREATE TABLE IF NOT EXISTS medico (
+    id_medico INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    especialidad VARCHAR(100) NOT NULL,
+    matricula VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- Table: turno
+CREATE TABLE IF NOT EXISTS turno (
+    id_turno INT AUTO_INCREMENT PRIMARY KEY,
+    fecha DATE NOT NULL,
+    horario TIME NOT NULL,
+    clinica VARCHAR(100) NOT NULL,
+    duracion INT NOT NULL,
+    paciente INT,
+    medico INT,
+    status VARCHAR(20) NOT NULL,
+    FOREIGN KEY (paciente) REFERENCES paciente(id_paciente),
+    FOREIGN KEY (medico) REFERENCES medico(id_medico)
+);
